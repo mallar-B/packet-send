@@ -38,6 +38,7 @@ const InteractionCard = () => {
     }
     setUploadComplete(true);
   };
+
   return (
     <Tabs defaultValue="upload">
       <TabsList>
