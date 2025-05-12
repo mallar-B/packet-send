@@ -43,7 +43,7 @@ const InteractionCard = () => {
     <Tabs defaultValue="upload">
       <TabsList>
         <TabsTrigger value="upload">Upload</TabsTrigger>
-        <TabsTrigger value="download">Create</TabsTrigger>
+        <TabsTrigger value="download">Download</TabsTrigger>
       </TabsList>
       <TabsContent value="upload">
         <Card className="p-4 space-y-4">
