@@ -8,7 +8,7 @@ const ReceiveCard = ({ className }: { className?: string }) => {
   return (
     <div
       className={cn(
-        "rounded-lg p-6 bg-background border-1 border-muted-foreground",
+        "rounded-lg p-6 bg-card border-1 border-muted-foreground",
         className,
       )}
     >

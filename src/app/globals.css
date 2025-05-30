@@ -43,12 +43,12 @@
   --radius-xl: calc(var(--radius) + 4px);
 }
 
-.dark {
-  --radius: 0.625rem;
+:root {
   /* Catppuccin Latte (light theme) */
-  --background: #e6e9ef; /* Mantle */
+  --radius: 0.625rem;
+  --background: #eff1f5; /* Base */
   --foreground: #4c4f69; /* Text */
-  --card: #eff1f5; /* Base */  
+  --card: #e6e9ef; /* Mantle */  
   --card-foreground: #4c4f69; /* Text */
   --popover: #e6e9ef; /* Mantle */
   --popover-foreground: #4c4f69; /* Text */
@@ -80,11 +80,12 @@
 }
 
 
-:root {
+.dark {
   /* Catppuccin Mocha (dark theme) */
-  --background: #1e1e2e; /* Base */
+  --radius: 0.625rem;
+  --background: #181825; /* Mantle */
   --foreground: #cdd6f4; /* Text */
-  --card: #181825; /* Mantle */
+  --card: #1e1e2e; /* Base */
   --card-foreground: #cdd6f4; /* Text */
   --popover: #181825; /* Mantle */
   --popover-foreground: #cdd6f4; /* Text */

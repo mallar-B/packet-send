@@ -5,7 +5,7 @@ import { SendHorizontal } from "lucide-react";
 
 export default function Header() {
   return (
-    <header className="w-full border-b bg-background py-4 px-[15%]">
+    <header className="w-full border-b bg-card py-4 px-[15%]">
       <div className="container mx-auto flex items-center justify-between">
         <div className="flex items-center gap-2">
           <SendHorizontal className="w-8 h-8 text-chart-4" />

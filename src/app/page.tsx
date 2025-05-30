@@ -1,28 +1,30 @@
 "use client";
-import * as Ably from "ably";
-import { useChannel } from "ably/react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useAblyRoom } from "@/hooks/useWebsocket";
-import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
 import FileUploadCard from "@/components/FileUploadCard";
 import Header from "@/components/Header";
 import ReceiveCard from "@/components/ReceiveCard";
+import { FileProvider, useFileContext } from "@/context/SelectedFileContext";
+import PeerIdCard from "@/components/PeerIdCard";
 
 export default function Home() {
   const [users, setUsers] = useState<Set<string>>(new Set());
   const { channelRef, roomId, joinRoom } = useAblyRoom();
+  const { file } = useFileContext();
 
   useEffect(() => {
+    if (file) {
+      joinRoom();
+    }
     return () => {
       if (channelRef.current) {
         channelRef.current.detach();
       }
     };
-  }, []);
+  }, [file]);
 
   return (
-    <main className="flex flex-col gap-[32px] items-center justify-center bg-card">
+    <main className="flex flex-col gap-[32px] items-center justify-center bg-background">
       <Header />
       <div className="grid grid-cols-3 gap-[32px] items-center justify-center w-full px-[15%]">
         <section className="col-span-2 flex flex-col text-center lg:text-left mb-8 animate-fade-in">
@@ -33,9 +35,13 @@ export default function Home() {
             Send files directly to your peers without server storage. Fast,
             secure, and private.
           </p>
-        <FileUploadCard className="mt-8"/>
+          <FileUploadCard className="mt-8" />
         </section>
-        <ReceiveCard className="mt-8" />
+        {!file ? (
+          <ReceiveCard className="mt-8" />
+        ) : (
+          <PeerIdCard className="mt-8" roomId={roomId} />
+        )}
       </div>
       {/* <Button onClick={() => joinRoom()}>join</Button> */}
     </main>
