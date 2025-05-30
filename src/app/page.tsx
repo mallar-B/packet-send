@@ -6,6 +6,7 @@ import Header from "@/components/Header";
 import ReceiveCard from "@/components/ReceiveCard";
 import { FileProvider, useFileContext } from "@/context/SelectedFileContext";
 import PeerIdCard from "@/components/PeerIdCard";
+import { Toaster } from "react-hot-toast";
 
 export default function Home() {
   const [users, setUsers] = useState<Set<string>>(new Set());
@@ -25,6 +26,16 @@ export default function Home() {
 
   return (
     <main className="flex flex-col gap-[32px] items-center justify-center bg-background">
+      <Toaster
+        toastOptions={{
+          className: "",
+          duration: 1500,
+          style: {
+            background: "#7287fd",
+            color: "#cdd6f4",
+          },
+        }}
+      />
       <Header />
       <div className="grid grid-cols-3 gap-[32px] items-center justify-center w-full px-[15%]">
         <section className="col-span-2 flex flex-col text-center lg:text-left mb-8 animate-fade-in">
