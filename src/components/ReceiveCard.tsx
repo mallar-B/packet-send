@@ -26,8 +26,6 @@ const ReceiveCard = ({ className }: { className?: string }) => {
           className="w-full p-2 border border-gray-300 rounded-md"
         />
         <Button
-          // onClick={handleConnect}
-          // isLoading={isConnecting}
           className="w-full mt-4 cursor-pointer"
         >
           <LinkIcon className="w-4 h-4 mr-2" />
