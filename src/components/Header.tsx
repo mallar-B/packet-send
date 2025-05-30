@@ -1,9 +1,23 @@
-import Link from "next/link";
-import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
-import { SendHorizontal } from "lucide-react";
+import { SendHorizontal, Moon, Sun } from "lucide-react";
+import { useEffect, useState } from "react";
 
 export default function Header() {
+  const [isDarkMode, setIsDarkMode] = useState(false);
+
+  useEffect(() => {
+    const storedTheme = localStorage.getItem("theme");
+    const dark = storedTheme === "dark";
+    setIsDarkMode(dark);
+    document.body.classList.toggle("dark", dark);
+  }, []);
+
+  const toggleTheme = () => {
+    const newMode = !isDarkMode;
+    setIsDarkMode(newMode);
+    document.body.classList.toggle("dark", newMode);
+    localStorage.setItem("theme", newMode ? "dark" : "light");
+  };
+
   return (
     <header className="w-full border-b bg-card py-4 px-[15%]">
       <div className="container mx-auto flex items-center justify-between">
@@ -13,7 +27,18 @@ export default function Header() {
             Packet<span className="text-chart-4">Send</span>
           </h1>
         </div>
-      </div>{" "}
+        <button
+          onClick={toggleTheme}
+          className="p-2 rounded-3xl hover:bg-muted transition-colors"
+          aria-label="Toggle Dark Mode"
+        >
+          {isDarkMode ? (
+            <Sun className="text-sidebar-foreground" size={25} />
+          ) : (
+            <Moon className="text-sidebar-foreground" size={25} />
+          )}
+        </button>
+      </div>
     </header>
   );
 }
