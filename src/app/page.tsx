@@ -4,13 +4,12 @@ import { useAblyRoom } from "@/hooks/useWebsocket";
 import FileUploadCard from "@/components/FileUploadCard";
 import Header from "@/components/Header";
 import ReceiveCard from "@/components/ReceiveCard";
-import { FileProvider, useFileContext } from "@/context/SelectedFileContext";
+import { useFileContext } from "@/context/SelectedFileContext";
 import PeerIdCard from "@/components/PeerIdCard";
 import { Toaster } from "react-hot-toast";
 
 export default function Home() {
-  const [users, setUsers] = useState<Set<string>>(new Set());
-  const { channelRef, roomId, joinRoom } = useAblyRoom();
+  const { channelRef, currentRoomId, joinRoom, users } = useAblyRoom();
   const { file } = useFileContext();
 
   useEffect(() => {
@@ -51,10 +50,10 @@ export default function Home() {
         {!file ? (
           <ReceiveCard className="mt-8" />
         ) : (
-          <PeerIdCard className="mt-8" roomId={roomId} />
+          <PeerIdCard className="mt-8" roomId={currentRoomId} />
         )}
       </div>
-      {/* <Button onClick={() => joinRoom()}>join</Button> */}
+       <button onClick={() => console.log(users)}>join</button> 
     </main>
   );
 }

@@ -1,10 +1,12 @@
 import { LinkIcon } from "lucide-react";
 import { Button } from "./ui/button";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { cn } from "@/lib/utils";
+import { useAblyRoom } from "@/hooks/useWebsocket";
 
 const ReceiveCard = ({ className }: { className?: string }) => {
-  const [peerIdInput, setPeerIdInput] = useState("");
+  const peerIdRef = useRef<string>("");
+  const { joinRoom } = useAblyRoom();
   return (
     <div
       className={cn(
@@ -15,18 +17,20 @@ const ReceiveCard = ({ className }: { className?: string }) => {
       <h1 className="text-2xl font-bold mb-4">Receive</h1>
       <div className="mb-4">
         <label htmlFor="peerId" className="block text-sm font-medium mb-1">
-          Enter Peer ID: 
+          Enter Peer ID:
         </label>
         <input
           id="peerId"
           type="text"
           placeholder="e.g. abc-pqrs-xyz"
-          value={peerIdInput}
-          onChange={(e) => setPeerIdInput(e.target.value)}
-          className="w-full p-2 border border-gray-300 rounded-md"
+          onChange={(e) => {
+            peerIdRef.current = e.target.value;
+          }}
+          className="w-full p-2 border rounded-md placeholder-muted-foreground"
         />
         <Button
           className="w-full mt-4 cursor-pointer"
+          onClick={() => joinRoom(peerIdRef.current)}
         >
           <LinkIcon className="w-4 h-4 mr-2" />
           <span>Receive</span>

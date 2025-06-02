@@ -1,11 +1,12 @@
 import * as Ably from "ably";
-import {
-  AblyProvider,
-  ChannelProvider,
-  useChannel,
-  useConnectionStateListener,
-} from "ably/react";
+// import {
+//   AblyProvider,
+//   ChannelProvider,
+//   useChannel,
+//   useConnectionStateListener,
+// } from "ably/react";
 import { useRef, useState } from "react";
+import { v4 as uuid } from "uuid";
 
 export const useAblyRoom = () => {
   const client = new Ably.Realtime(
@@ -14,8 +15,9 @@ export const useAblyRoom = () => {
   const ablyRef = useRef(client);
   const channelRef = useRef<Ably.RealtimeChannel>(null);
   const [isJoined, setIsJoined] = useState(false);
-  const [roomId, setRoomId] = useState("");
+  const [currentRoomId, setCurrentRoomId] = useState("");
   const [users, setUsers] = useState<Set<string>>(new Set());
+  const userId = uuid();
 
   const createRoomcode = () => {
     const part = (length: number) => {
@@ -33,14 +35,20 @@ export const useAblyRoom = () => {
       roomId = createRoomcode();
     }
     channelRef.current = ablyRef.current.channels.get(roomId);
-    channelRef.current.subscribe((message) => {
-      console.log(message);
-      if (message.name === "user connected") {
-        setUsers((users) => users.add(message.id));
-      }
+    channelRef.current.presence.subscribe("enter", (member) => {
+      console.log(member + "joined");
+      setUsers((users) => users.add(member.id));
     });
-    channelRef.current.publish("user connected", JSON.stringify(users));
-    setRoomId(roomId);
+    channelRef.current.presence.enterClient(userId);
+    setCurrentRoomId(roomId);
   };
-  return { isJoined, channelRef, ablyRef, joinRoom, roomId };
+  return {
+    isJoined,
+    channelRef,
+    ablyRef,
+    joinRoom,
+    currentRoomId,
+    userId,
+    users,
+  };
 };
