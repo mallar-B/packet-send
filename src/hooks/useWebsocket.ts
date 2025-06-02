@@ -7,14 +7,14 @@ import * as Ably from "ably";
 // } from "ably/react";
 import { useRef, useState } from "react";
 import { v4 as uuid } from "uuid";
+import { useWebRTC } from "./useWebRtc";
+
+const { startConnection } = useWebRTC();
 
 export const useAblyRoom = () => {
-  const client = new Ably.Realtime(
-    "cYeJDg.xsbpCA:sYLES_QdRTu_aaoumSAnXIUcG4utCdGufKKESu5lpsg",
-  );
+  const client = new Ably.Realtime(process.env.NEXT_PUBLIC_ABLYAPIKEY);
   const ablyRef = useRef(client);
   const channelRef = useRef<Ably.RealtimeChannel>(null);
-  const [isJoined, setIsJoined] = useState(false);
   const [currentRoomId, setCurrentRoomId] = useState("");
   const [users, setUsers] = useState<Set<string>>(new Set());
   const userId = uuid();
@@ -36,19 +36,23 @@ export const useAblyRoom = () => {
     }
     channelRef.current = ablyRef.current.channels.get(roomId);
     channelRef.current.presence.subscribe("enter", (member) => {
-      console.log(member + "joined");
+      console.log(member.id + "joined");
       setUsers((users) => users.add(member.id));
+      setTimeout(() => {
+        if (users.size === 2) {
+          console.log("ran startconnection() from sender");
+          startConnection({ userType: "sender", channelRef: channelRef, userId });
+        }
+      }, 1000);
     });
     channelRef.current.presence.enterClient(userId);
     setCurrentRoomId(roomId);
   };
   return {
-    isJoined,
     channelRef,
     ablyRef,
     joinRoom,
     currentRoomId,
     userId,
-    users,
   };
 };

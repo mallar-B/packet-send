@@ -7,9 +7,11 @@ import ReceiveCard from "@/components/ReceiveCard";
 import { useFileContext } from "@/context/SelectedFileContext";
 import PeerIdCard from "@/components/PeerIdCard";
 import { Toaster } from "react-hot-toast";
+import { useWebRTC } from "@/hooks/useWebRtc";
+import { channel } from "diagnostics_channel";
 
 export default function Home() {
-  const { channelRef, currentRoomId, joinRoom, users } = useAblyRoom();
+  const { channelRef, currentRoomId, joinRoom } = useAblyRoom();
   const { file } = useFileContext();
 
   useEffect(() => {
@@ -53,7 +55,6 @@ export default function Home() {
           <PeerIdCard className="mt-8" roomId={currentRoomId} />
         )}
       </div>
-       <button onClick={() => console.log(users)}>join</button> 
     </main>
   );
 }

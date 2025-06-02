@@ -1,12 +1,27 @@
 import { LinkIcon } from "lucide-react";
 import { Button } from "./ui/button";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 import { useAblyRoom } from "@/hooks/useWebsocket";
+import { useWebRTC } from "@/hooks/useWebRtc";
 
 const ReceiveCard = ({ className }: { className?: string }) => {
-  const peerIdRef = useRef<string>("");
-  const { joinRoom } = useAblyRoom();
+  const [peerId, setPeerId] = useState("");
+  const [isJoined, setIsJoined] = useState(false);
+  const { joinRoom, channelRef, userId } = useAblyRoom();
+  const { startConnection } = useWebRTC();
+
+  const handleReceive = (peerId: string) => {
+    joinRoom(peerId);
+    setIsJoined(true);
+  };
+
+  useEffect(() => {
+    if (isJoined) {
+      startConnection({ userType: "receiver", channelRef: channelRef, userId });
+    }
+  }, [isJoined]);
+
   return (
     <div
       className={cn(
@@ -24,18 +39,27 @@ const ReceiveCard = ({ className }: { className?: string }) => {
           type="text"
           placeholder="e.g. abc-pqrs-xyz"
           onChange={(e) => {
-            peerIdRef.current = e.target.value;
+            setPeerId(e.target.value);
           }}
           className="w-full p-2 border rounded-md placeholder-muted-foreground"
         />
         <Button
           className="w-full mt-4 cursor-pointer"
-          onClick={() => joinRoom(peerIdRef.current)}
+          onClick={() => handleReceive(peerId)}
         >
           <LinkIcon className="w-4 h-4 mr-2" />
           <span>Receive</span>
         </Button>
       </div>
+      <button
+        onClick={() => {
+          console.log(channelRef.current?.name);
+          console.log(process.env.NEXT_PUBLIC_ABLYAPIKEY);
+          console.log(userId)
+        }}
+      >
+        test
+      </button>
     </div>
   );
 };
