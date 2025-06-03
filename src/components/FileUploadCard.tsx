@@ -52,15 +52,15 @@ const FileUploadCard = ({
   return !file ? (
     <div
       className={cn(
-        `p-6 group ${isDisabled ? "cursor-not-allowed" : ""}`,
+        `p-6 group ${isDisabled ? "cursor-not-allowed pointer-events-none" : ""}`,
         className,
       )}
     >
       <Card
-        className={`w-full border-dashed border-2 border-muted-foreground p-6 bg-card ${isDisabled ? "cursor-not-allowed" : ""}`}
+        className={`w-full border-dashed border-2 border-muted-foreground p-6 bg-card ${isDisabled ? "cursor-not-allowed pointer-events-none" : ""}`}
       >
         <CardContent
-          className={`flex flex-col items-center justify-center gap-4 text-center cursor-pointer ${isDisabled ? "cursor-not-allowed" : ""}`}
+          className={`flex flex-col items-center justify-center gap-4 text-center cursor-pointer ${isDisabled ? "cursor-not-allowed pointer-events-none" : ""}`}
           onDragOver={(e) => e.preventDefault()}
           onDrop={handleDrop}
           onClick={handleClick}
@@ -122,7 +122,7 @@ const FileUploadCard = ({
         </CardContent>
       </Card>
       <Button
-        className={`w-max mt-4 cursor-pointer rounded-lg start-0 flex ${progress !== 0 && progress < 100 ? "cursor-not-allowed bg-muted-foreground hover:bg-muted-foreground" : ""}`}
+        className={`w-max mt-4 cursor-pointer rounded-lg start-0 flex ${progress !== 0 && progress < 100 ? "cursor-not-allowed bg-muted-foreground hover:bg-muted-foreground pointer-events-none" : ""}`}
         onClick={handleClick}
       >
         <Upload className="mr-1 font-bold" />

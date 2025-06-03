@@ -81,7 +81,7 @@ const ReceiveCard = ({
             <span>Receive</span>
           </Button>
         ) : receiverProgress < 100 ? (
-          <Button className="w-full mt-4 cursor-not-allowed bg-muted-foreground hover:bg-muted-foreground">
+          <Button className="w-full mt-4 cursor-not-allowed bg-muted-foreground hover:bg-muted-foreground pointer-events-none">
             <Loader className="w-4 h-4 mr-2" />
             <span>Receiving</span>
           </Button>
