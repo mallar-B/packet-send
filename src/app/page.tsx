@@ -7,8 +7,6 @@ import ReceiveCard from "@/components/ReceiveCard";
 import { useFileContext } from "@/context/SelectedFileContext";
 import PeerIdCard from "@/components/PeerIdCard";
 import { Toaster } from "react-hot-toast";
-import { useWebRTC } from "@/hooks/useWebRtc";
-import { channel } from "diagnostics_channel";
 
 export default function Home() {
   const { channelRef, currentRoomId, joinRoom } = useAblyRoom();

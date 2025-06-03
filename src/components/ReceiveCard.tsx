@@ -3,13 +3,12 @@ import { Button } from "./ui/button";
 import { useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 import { useAblyRoom } from "@/hooks/useWebsocket";
-import { useWebRTC } from "@/hooks/useWebRtc";
+import { startConnection } from "@/lib/webRTC";
 
 const ReceiveCard = ({ className }: { className?: string }) => {
   const [peerId, setPeerId] = useState("");
   const [isJoined, setIsJoined] = useState(false);
   const { joinRoom, channelRef, userId } = useAblyRoom();
-  const { startConnection } = useWebRTC();
 
   const handleReceive = (peerId: string) => {
     joinRoom(peerId);
@@ -51,15 +50,6 @@ const ReceiveCard = ({ className }: { className?: string }) => {
           <span>Receive</span>
         </Button>
       </div>
-      <button
-        onClick={() => {
-          console.log(channelRef.current?.name);
-          console.log(process.env.NEXT_PUBLIC_ABLYAPIKEY);
-          console.log(userId)
-        }}
-      >
-        test
-      </button>
     </div>
   );
 };

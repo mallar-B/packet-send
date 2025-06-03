@@ -7,9 +7,8 @@ import * as Ably from "ably";
 // } from "ably/react";
 import { useRef, useState } from "react";
 import { v4 as uuid } from "uuid";
-import { useWebRTC } from "./useWebRtc";
-
-const { startConnection } = useWebRTC();
+import { startConnection } from "@/lib/webRTC";
+import { useFileContext } from "@/context/SelectedFileContext";
 
 export const useAblyRoom = () => {
   const client = new Ably.Realtime(process.env.NEXT_PUBLIC_ABLYAPIKEY);
@@ -18,6 +17,7 @@ export const useAblyRoom = () => {
   const [currentRoomId, setCurrentRoomId] = useState("");
   const [users, setUsers] = useState<Set<string>>(new Set());
   const userId = uuid();
+  const { file } = useFileContext();
 
   const createRoomcode = () => {
     const part = (length: number) => {
@@ -41,7 +41,12 @@ export const useAblyRoom = () => {
       setTimeout(() => {
         if (users.size === 2) {
           console.log("ran startconnection() from sender");
-          startConnection({ userType: "sender", channelRef: channelRef, userId });
+          startConnection({
+            userType: "sender",
+            channelRef: channelRef,
+            userId,
+            file,
+          });
         }
       }, 1000);
     });
