@@ -18,6 +18,7 @@ export const useAblyRoom = () => {
   const [users, setUsers] = useState<Set<string>>(new Set());
   const userId = uuid();
   const { file } = useFileContext();
+  const [senderProgress, setSenderProgress] = useState(0);
 
   const createRoomcode = () => {
     const part = (length: number) => {
@@ -46,6 +47,7 @@ export const useAblyRoom = () => {
             channelRef: channelRef,
             userId,
             file,
+            setSenderProgress,
           });
         }
       }, 1000);
@@ -59,5 +61,7 @@ export const useAblyRoom = () => {
     joinRoom,
     currentRoomId,
     userId,
+    senderProgress,
+    setSenderProgress,
   };
 };

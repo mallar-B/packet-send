@@ -1,8 +1,11 @@
-// import streamSaver from "streamsaver";
-
 const Peer = require("simple-peer");
 
-export const sendFile = async (channelRef: any, peer: any, file: any) => {
+export const sendFile = async (
+  channelRef: any,
+  peer: any,
+  file: any,
+  setSenderProgress?: (n: number) => void,
+) => {
   const chunkSize = 1024 * 16; // 16kb
   let offset = 0;
   let progress = 0;
@@ -25,11 +28,17 @@ export const sendFile = async (channelRef: any, peer: any, file: any) => {
     peer.send(buffer);
     offset += chunkSize;
     progress += (chunkSize / file.size) * 100;
+    if (setSenderProgress) {
+      setSenderProgress(Math.round(progress));
+    }
 
     if (offset < file.size) {
       setTimeout(sendNextChunk, 100);
     } else {
       console.log("finished sending file");
+      if (setSenderProgress) {
+        setSenderProgress(100);
+      }
       channelRef.current.publish("finished sending", {
         fileName: file.name,
         fileSize: file.size,
@@ -44,21 +53,32 @@ export const receiveFile = async (
   peer: any,
   fileName: string,
   fileSize: number,
+  setReceiverProgress?: (n: number) => void,
 ) => {
   const streamSaverModule = await import("streamsaver");
   const streamSaver = streamSaverModule.default;
   const fileStream = streamSaver.createWriteStream(fileName);
   const writer = fileStream.getWriter();
+  let progress = 0;
+  let totalReceived = 0;
 
   // When the file is finished sending
   channelRef.current.subscribe("finished sending", (message: any) => {
     console.log("finished sending", message.data);
     writer.close();
+    if (setReceiverProgress) {
+      setReceiverProgress(100);
+    }
   });
 
   peer.on("data", async (chunk: any) => {
-    console.log(chunk);
     await writer.write(chunk);
+    totalReceived += chunk.byteLength;
+    progress = Math.min(100, Math.round((totalReceived / fileSize) * 100));
+    console.log("receiver progress is", progress);
+    if (setReceiverProgress) {
+      setReceiverProgress(Number(progress));
+    }
   });
   // await writer.close();
 };
@@ -68,11 +88,15 @@ export const startConnection = async ({
   channelRef,
   userId,
   file,
+  setReceiverProgress,
+  setSenderProgress,
 }: {
   userType: "sender" | "receiver";
   channelRef: any;
   userId: string;
   file?: any;
+  setReceiverProgress?: (n: number) => void;
+  setSenderProgress?: (n: number) => void;
 }) => {
   console.log("startConnection ran");
 
@@ -138,7 +162,11 @@ export const startConnection = async ({
     if (userType === "receiver") {
       const { fileName, fileSize } = JSON.parse(message.data);
       console.log("Receiving file", fileName, fileSize);
-      receiveFile(channelRef, peer, fileName, fileSize);
+      if (setReceiverProgress) {
+        receiveFile(channelRef, peer, fileName, fileSize, setReceiverProgress);
+      } else {
+        receiveFile(channelRef, peer, fileName, fileSize);
+      }
       // Send confirmation ready to receive file
       channelRef.current?.publish("receiver ready", userId);
     }
@@ -148,7 +176,7 @@ export const startConnection = async ({
   channelRef.current?.subscribe("receiver ready", (message: any) => {
     if (userType === "sender") {
       console.log("sending to", message.data);
-      sendFile(channelRef, peer, file);
+      sendFile(channelRef, peer, file, setSenderProgress);
     }
   });
 

@@ -5,8 +5,15 @@ import { Upload } from "lucide-react";
 import { useCallback, useRef } from "react";
 import { Button } from "./ui/button";
 import { useFileContext } from "@/context/SelectedFileContext";
+import { Progress } from "./ui/progress";
 
-const FileUploadCard = ({ className }: { className?: string }) => {
+const FileUploadCard = ({
+  progress,
+  className,
+}: {
+  progress: number;
+  className?: string;
+}) => {
   const inputRef = useRef<HTMLInputElement>(null);
   const { file, setFile } = useFileContext();
 
@@ -65,6 +72,18 @@ const FileUploadCard = ({ className }: { className?: string }) => {
   ) : (
     <div className={cn("p-6", className)}>
       <Card className="w-full border-double border-4 rounded-xl border-muted-foreground p-6 bg-card">
+        {/* Sending state*/}
+        {file ? (
+          <div className="flex w-full border-b-1 border-muted-foreground px-4 pb-2">
+            <span className="font-bold text-2xl text-sidebar-foreground">
+              {progress === 0
+                ? "In Queue"
+                : progress < 100
+                  ? "Sending..."
+                  : "Sent"}
+            </span>
+          </div>
+        ) : null}
         <CardContent className="flex flex-col items-center justify-center gap-4 text-center">
           <p className="text-sm text-foreground self-start">
             <span className="font-bold text-lg rounded-s-2xl">File:</span>{" "}
@@ -84,15 +103,23 @@ const FileUploadCard = ({ className }: { className?: string }) => {
             onChange={handleFileChange}
             className="w-full h-full hidden cursor-pointer"
           />
+          {/* Only for sender*/}
+          {progress !== 0 ? (
+            <div className="mt-3 flex self-start w-full items-center gap-3">
+              <Progress value={progress} className="w-full" />
+              <span className="text-xl font-black">{progress}%</span>
+            </div>
+          ) : null}
         </CardContent>
       </Card>
       <Button
-        className="w-max mt-4 cursor-pointer rounded-lg start-0 flex"
+        className={`w-max mt-4 cursor-pointer rounded-lg start-0 flex ${progress !== 0 && progress < 100 ? "cursor-not-allowed" : ""}`}
         onClick={handleClick}
+        disabled={progress !== 0 && progress < 100}
       >
         <Upload className="mr-1 font-bold" />
         <span className="font-bold text-accent text-lg my-4">
-          Re-Upload a Different File
+          Upload a Different File
         </span>
       </Button>
     </div>

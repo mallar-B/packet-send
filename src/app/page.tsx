@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useAblyRoom } from "@/hooks/useWebsocket";
 import FileUploadCard from "@/components/FileUploadCard";
 import Header from "@/components/Header";
@@ -9,11 +9,18 @@ import PeerIdCard from "@/components/PeerIdCard";
 import { Toaster } from "react-hot-toast";
 
 export default function Home() {
-  const { channelRef, currentRoomId, joinRoom } = useAblyRoom();
+  const {
+    channelRef,
+    currentRoomId,
+    joinRoom,
+    senderProgress,
+    setSenderProgress,
+  } = useAblyRoom();
   const { file } = useFileContext();
 
   useEffect(() => {
     if (file) {
+      setSenderProgress(0);
       joinRoom();
     }
     return () => {
@@ -45,7 +52,9 @@ export default function Home() {
             Send files directly to your peers without server storage. Fast,
             secure, and private.
           </p>
-          <FileUploadCard className="mt-8" />
+          <div className="mt-8">
+            <FileUploadCard progress={senderProgress} />
+          </div>
         </section>
         {!file ? (
           <ReceiveCard className="mt-8" />
@@ -53,6 +62,13 @@ export default function Home() {
           <PeerIdCard className="mt-8" roomId={currentRoomId} />
         )}
       </div>
+      <button
+        onClick={() => {
+          console.log(senderProgress);
+        }}
+      >
+        test
+      </button>
     </main>
   );
 }
