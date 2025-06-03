@@ -19,6 +19,7 @@ export const useAblyRoom = () => {
   const userId = uuid();
   const { file } = useFileContext();
   const [senderProgress, setSenderProgress] = useState(0);
+  const [isJoined, setIsJoined] = useState(false);
 
   const createRoomcode = () => {
     const part = (length: number) => {
@@ -54,14 +55,16 @@ export const useAblyRoom = () => {
     });
     channelRef.current.presence.enterClient(userId);
     setCurrentRoomId(roomId);
+    setIsJoined(true);
   };
   return {
     channelRef,
-    ablyRef,
     joinRoom,
     currentRoomId,
     userId,
     senderProgress,
     setSenderProgress,
+    isJoined,
+    setIsJoined,
   };
 };

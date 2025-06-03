@@ -10,9 +10,11 @@ import { Progress } from "./ui/progress";
 const FileUploadCard = ({
   progress,
   className,
+  isDisabled,
 }: {
   progress: number;
   className?: string;
+  isDisabled?: boolean;
 }) => {
   const inputRef = useRef<HTMLInputElement>(null);
   const { file, setFile } = useFileContext();
@@ -48,10 +50,17 @@ const FileUploadCard = ({
   };
 
   return !file ? (
-    <div className={cn("p-6", className)}>
-      <Card className="w-full border-dashed border-2 border-muted-foreground p-6 bg-card">
+    <div
+      className={cn(
+        `p-6 group ${isDisabled ? "cursor-not-allowed" : ""}`,
+        className,
+      )}
+    >
+      <Card
+        className={`w-full border-dashed border-2 border-muted-foreground p-6 bg-card ${isDisabled ? "cursor-not-allowed" : ""}`}
+      >
         <CardContent
-          className="flex flex-col items-center justify-center gap-4 text-center cursor-pointer"
+          className={`flex flex-col items-center justify-center gap-4 text-center cursor-pointer ${isDisabled ? "cursor-not-allowed" : ""}`}
           onDragOver={(e) => e.preventDefault()}
           onDrop={handleDrop}
           onClick={handleClick}
@@ -113,9 +122,8 @@ const FileUploadCard = ({
         </CardContent>
       </Card>
       <Button
-        className={`w-max mt-4 cursor-pointer rounded-lg start-0 flex ${progress !== 0 && progress < 100 ? "cursor-not-allowed" : ""}`}
+        className={`w-max mt-4 cursor-pointer rounded-lg start-0 flex ${progress !== 0 && progress < 100 ? "cursor-not-allowed bg-muted-foreground hover:bg-muted-foreground" : ""}`}
         onClick={handleClick}
-        disabled={progress !== 0 && progress < 100}
       >
         <Upload className="mr-1 font-bold" />
         <span className="font-bold text-accent text-lg my-4">

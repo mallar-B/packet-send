@@ -1,5 +1,5 @@
 "use client";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useAblyRoom } from "@/hooks/useWebsocket";
 import FileUploadCard from "@/components/FileUploadCard";
 import Header from "@/components/Header";
@@ -15,6 +15,9 @@ export default function Home() {
     joinRoom,
     senderProgress,
     setSenderProgress,
+    userId,
+    isJoined,
+    setIsJoined,
   } = useAblyRoom();
   const { file } = useFileContext();
 
@@ -53,18 +56,29 @@ export default function Home() {
             secure, and private.
           </p>
           <div className="mt-8">
-            <FileUploadCard progress={senderProgress} />
+            <FileUploadCard
+              progress={senderProgress}
+              isDisabled={isJoined && !file} // Joined and no file means receiver
+            />
           </div>
         </section>
         {!file ? (
-          <ReceiveCard className="mt-8" />
+          <ReceiveCard
+            className="mt-8"
+            joinRoom={joinRoom}
+            channelRef={channelRef}
+            userId={userId}
+            isJoined={isJoined}
+            setIsJoined={setIsJoined}
+          />
         ) : (
           <PeerIdCard className="mt-8" roomId={currentRoomId} />
         )}
       </div>
       <button
         onClick={() => {
-          console.log(senderProgress);
+          console.log(isJoined);
+          console.log(!file);
         }}
       >
         test

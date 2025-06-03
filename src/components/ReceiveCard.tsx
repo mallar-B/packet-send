@@ -3,15 +3,26 @@ import { HardDriveDownload, LinkIcon, Loader, Upload } from "lucide-react";
 import { Button } from "./ui/button";
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
-import { useAblyRoom } from "@/hooks/useWebsocket";
 import { startConnection } from "@/lib/webRTC";
 import { Progress } from "./ui/progress";
 
-const ReceiveCard = ({ className }: { className?: string }) => {
+const ReceiveCard = ({
+  className,
+  joinRoom,
+  channelRef,
+  userId,
+  isJoined,
+  setIsJoined,
+}: {
+  className?: string;
+  joinRoom: any;
+  channelRef: any;
+  userId: any;
+  isJoined: boolean;
+  setIsJoined: (isJoined: boolean) => void;
+}) => {
   const [peerId, setPeerId] = useState("");
-  const [isJoined, setIsJoined] = useState(false);
   const [receiverProgress, setReceiverProgress] = useState(0);
-  const { joinRoom, channelRef, userId } = useAblyRoom();
 
   const handleReceive = (peerId: string) => {
     try {
@@ -55,10 +66,10 @@ const ReceiveCard = ({ className }: { className?: string }) => {
           className="w-full p-2 border rounded-md placeholder-muted-foreground"
         />
         {receiverProgress !== 0 && receiverProgress !== 100 ? (
-          <>
-            <Progress value={receiverProgress} className="mt-4 w-full" />
+          <div className="flex w-full items-center justify-center mt-4 gap-2">
+            <Progress value={receiverProgress} />
             <span className="text-xl font-black">{receiverProgress}%</span>
-          </>
+          </div>
         ) : null}
 
         {receiverProgress === 0 ? (
@@ -70,7 +81,7 @@ const ReceiveCard = ({ className }: { className?: string }) => {
             <span>Receive</span>
           </Button>
         ) : receiverProgress < 100 ? (
-          <Button className="w-full mt-4 cursor-not-allowed" disabled>
+          <Button className="w-full mt-4 cursor-not-allowed bg-muted-foreground hover:bg-muted-foreground">
             <Loader className="w-4 h-4 mr-2" />
             <span>Receiving</span>
           </Button>
