@@ -3,49 +3,53 @@ const Peer = require("simple-peer");
 export const sendFile = async (
   channelRef: any,
   peer: any,
-  file: any,
+  file: File,
   setSenderProgress?: (n: number) => void,
 ) => {
-  const chunkSize = 1024 * 16; // 16kb
+  const chunkSize = 16 * 1024; // 16 KB
+  const maxBuffer = 1 * 1024 * 1024; // 1 MB
+  const lowWaterMark = 512 * 1024; // Resume when buffer drops below 512 KB
   let offset = 0;
-  let progress = 0;
 
-  // If size is < 16kb send the whole file at once
-  if (file.size < chunkSize) {
-    const buffer = await file.arrayBuffer();
-    peer.send(buffer);
-    return;
-  }
+  peer.bufferedAmountLowThreshold = lowWaterMark;
 
-  // Else send the file in chunks
-  const sendNextChunk = async () => {
-    const chunk = file.slice(offset, offset + chunkSize);
-    const buffer = await chunk.arrayBuffer();
-    console.log("chunk is", chunk);
-    console.log("actual buffer is", buffer);
-    console.log("current offset is", offset);
-    console.log("current progress is", progress);
-    peer.send(buffer);
-    offset += chunkSize;
-    progress += (chunkSize / file.size) * 100;
-    if (setSenderProgress) {
-      setSenderProgress(Math.round(progress));
-    }
-
-    if (offset < file.size) {
-      setTimeout(sendNextChunk, 100);
-    } else {
-      console.log("finished sending file");
-      if (setSenderProgress) {
-        setSenderProgress(100);
+  const sendChunk = async () => {
+    while (offset < file.size) {
+      // Wait if buffer is full
+      if (peer.bufferedAmount > maxBuffer) {
+        await new Promise((resolve) => {
+          const onLow = () => {
+            peer.removeEventListener("bufferedamountlow", onLow);
+            resolve(null);
+          };
+          peer.addEventListener("bufferedamountlow", onLow);
+        });
       }
-      channelRef.current.publish("finished sending", {
-        fileName: file.name,
-        fileSize: file.size,
-      });
+
+      // Read and send next chunk
+      const chunk = file.slice(offset, offset + chunkSize);
+      const buffer = await chunk.arrayBuffer();
+      peer.send(buffer);
+
+      offset += chunkSize;
+
+      // Update progress
+      if (setSenderProgress) {
+        setSenderProgress(
+          Math.min(100, Math.round((offset / file.size) * 100)),
+        );
+      }
     }
+
+    // Done
+    if (setSenderProgress) setSenderProgress(100);
+    channelRef.current.publish("finished sending", {
+      fileName: file.name,
+      fileSize: file.size,
+    });
   };
-  sendNextChunk();
+
+  sendChunk();
 };
 
 export const receiveFile = async (
@@ -107,7 +111,18 @@ export const startConnection = async ({
       initiator: true,
       trickle: true,
       config: {
-        iceServers: [{ urls: "stun:stun.l.google.com:19302" }],
+        iceServers: [
+          { urls: "stun:stun.l.google.com:19302" },
+          { urls: "stun:stun.l.google.com:5349" },
+          { urls: "stun:stun1.l.google.com:3478" },
+          { urls: "stun:stun1.l.google.com:5349" },
+          { urls: "stun:stun2.l.google.com:19302" },
+          { urls: "stun:stun2.l.google.com:5349" },
+          { urls: "stun:stun3.l.google.com:3478" },
+          { urls: "stun:stun3.l.google.com:5349" },
+          { urls: "stun:stun4.l.google.com:19302" },
+          { urls: "stun:stun4.l.google.com:5349" },
+        ],
       },
     });
   } else {
@@ -115,7 +130,18 @@ export const startConnection = async ({
       initiator: false,
       trickle: true,
       config: {
-        iceServers: [{ urls: "stun:stun.l.google.com:19302" }],
+        iceServers: [
+          { urls: "stun:stun.l.google.com:19302" },
+          { urls: "stun:stun.l.google.com:5349" },
+          { urls: "stun:stun1.l.google.com:3478" },
+          { urls: "stun:stun1.l.google.com:5349" },
+          { urls: "stun:stun2.l.google.com:19302" },
+          { urls: "stun:stun2.l.google.com:5349" },
+          { urls: "stun:stun3.l.google.com:3478" },
+          { urls: "stun:stun3.l.google.com:5349" },
+          { urls: "stun:stun4.l.google.com:19302" },
+          { urls: "stun:stun4.l.google.com:5349" },
+        ],
       },
     });
   }
