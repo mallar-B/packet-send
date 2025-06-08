@@ -7,16 +7,17 @@ export const sendFile = async (
   setSenderProgress?: (n: number) => void,
 ) => {
   const chunkSize = 16 * 1024; // 16 KB
-  const maxBuffer = 1 * 1024 * 1024; // 1 MB
-  const lowWaterMark = 512 * 1024; // Resume when buffer drops below 512 KB
+  const maxBuffer = 512 * 1024; // 512 KB
+  const lowWaterMark = 64 * 1024; // Resume when buffer drops below 64 KB
   let offset = 0;
 
+  // Set the threshold for bufferedamountlow event
   peer.bufferedAmountLowThreshold = lowWaterMark;
 
   const sendChunk = async () => {
     while (offset < file.size) {
-      // Wait if buffer is full
-      if (peer.bufferedAmount > maxBuffer) {
+      // Check buffer before sending each chunk
+      while (peer.bufferedAmount >= maxBuffer) {
         await new Promise((resolve) => {
           const onLow = () => {
             peer.removeEventListener("bufferedamountlow", onLow);
@@ -26,10 +27,19 @@ export const sendFile = async (
         });
       }
 
-      // Read and send next chunk
       const chunk = file.slice(offset, offset + chunkSize);
       const buffer = await chunk.arrayBuffer();
-      peer.send(buffer);
+
+      try {
+        peer.send(buffer);
+      } catch (error: any) {
+        // If send fails, wait a bit and retry
+        if (error.message.includes("send queue is full")) {
+          await new Promise((resolve) => setTimeout(resolve, 100));
+          continue; // Retry this chunk
+        }
+        throw error; // Re-throw other errors
+      }
 
       offset += chunkSize;
 
@@ -39,6 +49,9 @@ export const sendFile = async (
           Math.min(100, Math.round((offset / file.size) * 100)),
         );
       }
+
+      // Small delay to prevent overwhelming the connection
+      await new Promise((resolve) => setTimeout(resolve, 1));
     }
 
     // Done
@@ -49,7 +62,7 @@ export const sendFile = async (
     });
   };
 
-  sendChunk();
+  await sendChunk();
 };
 
 export const receiveFile = async (
@@ -112,16 +125,10 @@ export const startConnection = async ({
       trickle: true,
       config: {
         iceServers: [
-          { urls: "stun:stun.l.google.com:19302" },
           { urls: "stun:stun.l.google.com:5349" },
-          { urls: "stun:stun1.l.google.com:3478" },
           { urls: "stun:stun1.l.google.com:5349" },
           { urls: "stun:stun2.l.google.com:19302" },
-          { urls: "stun:stun2.l.google.com:5349" },
           { urls: "stun:stun3.l.google.com:3478" },
-          { urls: "stun:stun3.l.google.com:5349" },
-          { urls: "stun:stun4.l.google.com:19302" },
-          { urls: "stun:stun4.l.google.com:5349" },
         ],
       },
     });
@@ -131,16 +138,10 @@ export const startConnection = async ({
       trickle: true,
       config: {
         iceServers: [
-          { urls: "stun:stun.l.google.com:19302" },
           { urls: "stun:stun.l.google.com:5349" },
-          { urls: "stun:stun1.l.google.com:3478" },
           { urls: "stun:stun1.l.google.com:5349" },
           { urls: "stun:stun2.l.google.com:19302" },
-          { urls: "stun:stun2.l.google.com:5349" },
           { urls: "stun:stun3.l.google.com:3478" },
-          { urls: "stun:stun3.l.google.com:5349" },
-          { urls: "stun:stun4.l.google.com:19302" },
-          { urls: "stun:stun4.l.google.com:5349" },
         ],
       },
     });
@@ -199,10 +200,10 @@ export const startConnection = async ({
   });
 
   // If receiver is ready to receive file send it
-  channelRef.current?.subscribe("receiver ready", (message: any) => {
+  channelRef.current?.subscribe("receiver ready", async (message: any) => {
     if (userType === "sender") {
       console.log("sending to", message.data);
-      sendFile(channelRef, peer, file, setSenderProgress);
+      await sendFile(channelRef, peer, file, setSenderProgress);
     }
   });
 
