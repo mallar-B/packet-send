@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import { startConnection } from "@/lib/webRTC";
 import { Progress } from "./ui/progress";
+import toast from "react-hot-toast";
 
 const ReceiveCard = ({
   className,
@@ -23,6 +24,15 @@ const ReceiveCard = ({
 }) => {
   const [peerId, setPeerId] = useState("");
   const [receiverProgress, setReceiverProgress] = useState(0);
+
+  useEffect(() => {
+    if (receiverProgress === 100) {
+      toast.success("File received successfully!");
+      setTimeout(() => {
+        window.location.reload();
+      }, 5000);
+    }
+  }, [receiverProgress]);
 
   const handleReceive = (peerId: string) => {
     try {
@@ -86,22 +96,13 @@ const ReceiveCard = ({
             <span>Receiving</span>
           </Button>
         ) : (
-          <div className="grid grid-cols-2 gap-3">
+          <div className="">
             <Button
               className="mt-4 cursor-pointer w-full"
-              onClick={() => handleReceive(peerId)}
+              // onClick={() => handleReceive(peerId)}
             >
               <HardDriveDownload className="w-4 h-4 mr-2" />
-              <span>Receive again</span>
-            </Button>
-            <Button
-              className="w-full mt-4 cursor-pointer"
-              onClick={() => {
-                window.location.reload();
-              }}
-            >
-              <Upload className="w-4 h-4 mr-2" />
-              <span>Send</span>
+              <span>Received</span>
             </Button>
           </div>
         )}
