@@ -1,3 +1,5 @@
+import toast from "react-hot-toast";
+
 const Peer = require("simple-peer");
 
 export const sendFile = async (
@@ -209,8 +211,13 @@ export const startConnection = async ({
     }
   });
 
-  peer.on("error", (err: any) => {
-    console.error("Peer error:", err);
+  peer.on("error", (err: Error) => {
+    if (err.message === "User-Initiated Abort, reason=Close called") {
+      toast.error("Peer Disconnected");
+      closeConnection(peer);
+      return;
+    }
+    console.error(err);
   });
 
   return peer;
