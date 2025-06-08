@@ -18,12 +18,14 @@ export default function Home() {
     userId,
     isJoined,
     setIsJoined,
+    leaveRoom,
   } = useAblyRoom();
   const { file } = useFileContext();
 
   useEffect(() => {
     if (file) {
       setSenderProgress(0);
+      leaveRoom();
       joinRoom();
     }
     return () => {
