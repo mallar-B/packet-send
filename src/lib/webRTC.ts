@@ -74,7 +74,9 @@ export const receiveFile = async (
 ) => {
   const streamSaverModule = await import("streamsaver");
   const streamSaver = streamSaverModule.default;
-  const fileStream = streamSaver.createWriteStream(fileName);
+  const fileStream = streamSaver.createWriteStream(fileName, {
+    size: fileSize,
+  });
   const writer = fileStream.getWriter();
   let progress = 0;
   let totalReceived = 0;
