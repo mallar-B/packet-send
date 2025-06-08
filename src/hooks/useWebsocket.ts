@@ -7,11 +7,13 @@ import * as Ably from "ably";
 // } from "ably/react";
 import { useRef, useState } from "react";
 import { v4 as uuid } from "uuid";
-import { startConnection } from "@/lib/webRTC";
+import { startConnection, closeConnection } from "@/lib/webRTC";
 import { useFileContext } from "@/context/SelectedFileContext";
 
 export const useAblyRoom = () => {
-  const client = new Ably.Realtime(process.env.NEXT_PUBLIC_ABLYAPIKEY);
+  const client = new Ably.Realtime(
+    process.env.NEXT_PUBLIC_ABLYAPIKEY as string,
+  );
   const ablyRef = useRef(client);
   const channelRef = useRef<Ably.RealtimeChannel>(null);
   const [currentRoomId, setCurrentRoomId] = useState("");
@@ -57,6 +59,36 @@ export const useAblyRoom = () => {
     setCurrentRoomId(roomId);
     setIsJoined(true);
   };
+
+  const leaveRoom = async () => {
+    if (channelRef.current) {
+      // webRTC disconnect
+      closeConnection();
+      console.log("closeConnection ran");
+
+      const channel = channelRef.current;
+
+      // Only try to leave if the channel is not detaching or detached
+      if (channel.state !== "detaching" && channel.state !== "detached") {
+        try {
+          await channel.presence.leaveClient(userId);
+        } catch (error) {
+          console.error("Failed to leave presence:", error);
+        }
+
+        try {
+          await channel.detach();
+        } catch (error) {
+          console.error("Failed to detach channel:", error);
+        }
+      }
+
+      setUsers(new Set());
+      setCurrentRoomId("");
+      setIsJoined(false);
+    }
+  };
+
   return {
     channelRef,
     joinRoom,
@@ -66,5 +98,6 @@ export const useAblyRoom = () => {
     setSenderProgress,
     isJoined,
     setIsJoined,
+    leaveRoom,
   };
 };
