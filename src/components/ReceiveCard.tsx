@@ -29,7 +29,7 @@ const ReceiveCard = ({
   setConnectingToPeer: (n: boolean) => void;
 }) => {
   const [peerId, setPeerId] = useState("");
-  const [receiverProgress, setReceiverProgress] = useState(100);
+  const [receiverProgress, setReceiverProgress] = useState(0);
 
   useEffect(() => {
     if (receiverProgress === 100) {
