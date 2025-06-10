@@ -127,6 +127,7 @@ export const startConnection = async ({
   file,
   setReceiverProgress,
   setSenderProgress,
+  setConnectingToPeer,
 }: {
   userType: "sender" | "receiver";
   channelRef: any;
@@ -134,10 +135,13 @@ export const startConnection = async ({
   file?: any;
   setReceiverProgress?: (n: number) => void;
   setSenderProgress?: (n: number) => void;
+  setConnectingToPeer?: (n: boolean) => void;
 }) => {
   console.log("startConnection ran");
 
   let peer: any;
+  // Peer is not connected
+  setConnectingToPeer?.(true);
 
   if (userType === "sender") {
     peer = new Peer({
@@ -194,6 +198,7 @@ export const startConnection = async ({
   peer.on("connect", (data: any) => {
     console.log("connected p2p", data);
     if (userType === "sender" && file) {
+      setConnectingToPeer?.(false);
       channelRef.current?.publish(
         "sending",
         JSON.stringify({

@@ -22,6 +22,7 @@ export const useAblyRoom = () => {
   const { file } = useFileContext();
   const [senderProgress, setSenderProgress] = useState(0);
   const [isJoined, setIsJoined] = useState(false);
+  const [connectingToPeer, setConnectingToPeer] = useState(false);
 
   const createRoomcode = () => {
     const part = (length: number) => {
@@ -98,5 +99,7 @@ export const useAblyRoom = () => {
     isJoined,
     setIsJoined,
     leaveRoom,
+    connectingToPeer,
+    setConnectingToPeer,
   };
 };

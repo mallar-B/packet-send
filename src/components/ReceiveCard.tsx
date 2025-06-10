@@ -1,5 +1,5 @@
 "use client";
-import { HardDriveDownload, LinkIcon, Loader, Upload, X } from "lucide-react";
+import { HardDriveDownload, HardDriveUpload, LinkIcon, Loader, Upload, X } from "lucide-react";
 import { Button } from "./ui/button";
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
@@ -14,7 +14,9 @@ const ReceiveCard = ({
   userId,
   isJoined,
   setIsJoined,
-  leaveRoom, 
+  leaveRoom,
+  connectingToPeer,
+  setConnectingToPeer,
 }: {
   className?: string;
   joinRoom: any;
@@ -23,9 +25,11 @@ const ReceiveCard = ({
   isJoined: boolean;
   setIsJoined: (isJoined: boolean) => void;
   leaveRoom: () => void;
+  connectingToPeer: boolean;
+  setConnectingToPeer: (n: boolean) => void;
 }) => {
   const [peerId, setPeerId] = useState("");
-  const [receiverProgress, setReceiverProgress] = useState(0);
+  const [receiverProgress, setReceiverProgress] = useState(100);
 
   useEffect(() => {
     if (receiverProgress === 100) {
@@ -52,6 +56,7 @@ const ReceiveCard = ({
         channelRef: channelRef,
         userId,
         setReceiverProgress,
+        setConnectingToPeer,
       });
     }
   }, [isJoined]);
@@ -85,23 +90,33 @@ const ReceiveCard = ({
         ) : null}
 
         {receiverProgress === 0 ? (
-          <Button
-            className="w-full mt-4 cursor-pointer"
-            onClick={() => handleReceive(peerId)}
-          >
-            <LinkIcon className="w-4 h-4 mr-2" />
-            <span>Receive</span>
-          </Button>
+          connectingToPeer ? (
+            <Button className="w-full mt-4 bg-muted-foreground pointer-events-none cursor-not-allowed">
+              <Loader className="w-4 h-4 mr-2 animate-spin" />
+              <span>Connecting</span>
+            </Button>
+          ) : (
+            <Button
+              className="w-full mt-4 cursor-pointer"
+              onClick={() => handleReceive(peerId)}
+            >
+              <LinkIcon className="w-4 h-4 mr-2" />
+              <span>Receive</span>
+            </Button>
+          )
         ) : receiverProgress < 100 ? (
           <div className="w-full grid grid-cols-6 gap-2">
             <Button className=" mt-4 col-span-4 cursor-not-allowed bg-muted-foreground hover:bg-muted-foreground pointer-events-none">
-              <Loader className="w-4 h-4 mr-2" />
+              <Loader className="w-4 h-4 mr-2 animate-spin" />
               <span>Receiving</span>
             </Button>
-            <Button className=" mt-4 col-span-2 hover:bg-destructive bg-destructive/90 cursor-pointer" onClick={() => {
-              setReceiverProgress(0);
-              leaveRoom();
-            }}>
+            <Button
+              className=" mt-4 col-span-2 hover:bg-destructive bg-destructive/90 cursor-pointer"
+              onClick={() => {
+                setReceiverProgress(0);
+                leaveRoom();
+              }}
+            >
               <X className="w-4 h-4 mr-2" />
               <span>Cancel</span>
             </Button>
@@ -110,15 +125,15 @@ const ReceiveCard = ({
           <div className="grid grid-cols-2 gap-2">
             <Button
               className="mt-4 cursor-pointer col-span-1"
-              // onClick={() => handleReceive(peerId)}
+              onClick={() => window.location.reload()}
             >
               <HardDriveDownload className="w-4 h-4 mr-2" />
-              <span>Received</span>
+              <span>Receive again</span>
             </Button>
-            <Button
-              className="mt-4 cursor-pointer col-span-1"
+            <Button className="mt-4 cursor-pointer col-span-1"
+              onClick={() => window.location.reload()}
             >
-              <HardDriveDownload className="w-4 h-4 mr-2" />
+              <HardDriveUpload className="w-4 h-4 mr-2" />
               <span>Send</span>
             </Button>
           </div>

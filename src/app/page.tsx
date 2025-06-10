@@ -19,6 +19,8 @@ export default function Home() {
     isJoined,
     setIsJoined,
     leaveRoom,
+    connectingToPeer,
+    setConnectingToPeer,
   } = useAblyRoom();
   const { file } = useFileContext();
 
@@ -73,6 +75,8 @@ export default function Home() {
             isJoined={isJoined}
             setIsJoined={setIsJoined}
             leaveRoom={leaveRoom}
+            connectingToPeer={connectingToPeer}
+            setConnectingToPeer={setConnectingToPeer}
           />
         ) : (
           <PeerIdCard className="mt-8" roomId={currentRoomId} />

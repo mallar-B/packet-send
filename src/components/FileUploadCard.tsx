@@ -137,7 +137,7 @@ const FileUploadCard = ({
             window.location.reload();
           }}
         >
-        <Download className="mr-1 font-bold" />
+          <Download className="mr-1 font-bold" />
           <span className="font-bold text-accent text-lg my-4">
             Receive a File
           </span>
