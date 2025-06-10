@@ -72,6 +72,7 @@ export default function Home() {
             userId={userId}
             isJoined={isJoined}
             setIsJoined={setIsJoined}
+            leaveRoom={leaveRoom}
           />
         ) : (
           <PeerIdCard className="mt-8" roomId={currentRoomId} />

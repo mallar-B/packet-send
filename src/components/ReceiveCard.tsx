@@ -1,5 +1,5 @@
 "use client";
-import { HardDriveDownload, LinkIcon, Loader, Upload } from "lucide-react";
+import { HardDriveDownload, LinkIcon, Loader, Upload, X } from "lucide-react";
 import { Button } from "./ui/button";
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
@@ -14,6 +14,7 @@ const ReceiveCard = ({
   userId,
   isJoined,
   setIsJoined,
+  leaveRoom, 
 }: {
   className?: string;
   joinRoom: any;
@@ -21,6 +22,7 @@ const ReceiveCard = ({
   userId: any;
   isJoined: boolean;
   setIsJoined: (isJoined: boolean) => void;
+  leaveRoom: () => void;
 }) => {
   const [peerId, setPeerId] = useState("");
   const [receiverProgress, setReceiverProgress] = useState(0);
@@ -91,10 +93,19 @@ const ReceiveCard = ({
             <span>Receive</span>
           </Button>
         ) : receiverProgress < 100 ? (
-          <Button className="w-full mt-4 cursor-not-allowed bg-muted-foreground hover:bg-muted-foreground pointer-events-none">
-            <Loader className="w-4 h-4 mr-2" />
-            <span>Receiving</span>
-          </Button>
+          <div className="w-full grid grid-cols-6 gap-2">
+            <Button className=" mt-4 col-span-4 cursor-not-allowed bg-muted-foreground hover:bg-muted-foreground pointer-events-none">
+              <Loader className="w-4 h-4 mr-2" />
+              <span>Receiving</span>
+            </Button>
+            <Button className=" mt-4 col-span-2 hover:bg-destructive bg-destructive/90 cursor-pointer" onClick={() => {
+              setReceiverProgress(0);
+              leaveRoom();
+            }}>
+              <X className="w-4 h-4 mr-2" />
+              <span>Cancel</span>
+            </Button>
+          </div>
         ) : (
           <div className="">
             <Button

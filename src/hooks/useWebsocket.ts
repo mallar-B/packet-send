@@ -63,8 +63,7 @@ export const useAblyRoom = () => {
   const leaveRoom = async () => {
     if (channelRef.current) {
       // webRTC disconnect
-      closeConnection();
-      console.log("closeConnection ran");
+      channelRef.current.publish("receiver canceled", { userId });
 
       const channel = channelRef.current;
 

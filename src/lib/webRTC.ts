@@ -1,6 +1,7 @@
 import toast from "react-hot-toast";
 
 const Peer = require("simple-peer");
+let receiveCancelled = false;
 
 export const sendFile = async (
   channelRef: any,
@@ -84,16 +85,23 @@ export const receiveFile = async (
   let totalReceived = 0;
 
   // When the file is finished sending
-  channelRef.current.subscribe("finished sending", (message: any) => {
+  channelRef.current.subscribe("finished sending", async (message: any) => {
     console.log("finished sending", message.data);
-    writer.close();
+    await writer.close();
     if (setReceiverProgress) {
       setReceiverProgress(100);
     }
   });
 
   peer.on("data", async (chunk: any) => {
-    await writer.write(chunk);
+    try {
+      await writer.write(chunk);
+    } catch (error) {
+      if (receiveCancelled) return;
+      toast.error("Transfer canceled");
+      receiveCancelled = true;
+      channelRef.current.publish("receiver canceled", { fileName });
+    }
     totalReceived += chunk.byteLength;
     progress = Math.min(100, Math.round((totalReceived / fileSize) * 100));
     console.log("receiver progress is", progress);
@@ -211,6 +219,24 @@ export const startConnection = async ({
     }
   });
 
+  // Listen for graceful disconnect
+  channelRef.current?.subscribe("receiver canceled", (message: any) => {
+    console.log(message.data, "canceled file transfer");
+    if (setSenderProgress) {
+      setSenderProgress(0);
+    }
+    if (setReceiverProgress) {
+      setReceiverProgress(0);
+    }
+    closeConnection(peer);
+    toast.error("Transfer Canceled", {
+      duration: 3000,
+    });
+    setTimeout(() => {
+      window.location.reload();
+    }, 3000);
+  });
+
   peer.on("error", (err: Error) => {
     if (err.message === "User-Initiated Abort, reason=Close called") {
       toast.error("Peer Disconnected");
@@ -225,6 +251,8 @@ export const startConnection = async ({
 
 export const closeConnection = (peer?: any) => {
   if (peer) {
+    peer.removeAllListeners("data");
     peer.destroy();
+    console.log("peer destroyed");
   }
 };
