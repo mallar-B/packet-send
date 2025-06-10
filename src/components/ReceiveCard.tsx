@@ -107,13 +107,19 @@ const ReceiveCard = ({
             </Button>
           </div>
         ) : (
-          <div className="">
+          <div className="grid grid-cols-2 gap-2">
             <Button
-              className="mt-4 cursor-pointer w-full"
+              className="mt-4 cursor-pointer col-span-1"
               // onClick={() => handleReceive(peerId)}
             >
               <HardDriveDownload className="w-4 h-4 mr-2" />
               <span>Received</span>
+            </Button>
+            <Button
+              className="mt-4 cursor-pointer col-span-1"
+            >
+              <HardDriveDownload className="w-4 h-4 mr-2" />
+              <span>Send</span>
             </Button>
           </div>
         )}

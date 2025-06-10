@@ -1,7 +1,7 @@
 "use client";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
-import { Upload } from "lucide-react";
+import { Download, Upload } from "lucide-react";
 import { useCallback, useRef } from "react";
 import { Button } from "./ui/button";
 import { useFileContext } from "@/context/SelectedFileContext";
@@ -121,15 +121,28 @@ const FileUploadCard = ({
           ) : null}
         </CardContent>
       </Card>
-      <Button
-        className={`w-max mt-4 cursor-pointer rounded-lg start-0 flex ${progress !== 0 && progress < 100 ? "cursor-not-allowed bg-muted-foreground hover:bg-muted-foreground pointer-events-none" : ""}`}
-        onClick={handleClick}
-      >
-        <Upload className="mr-1 font-bold" />
-        <span className="font-bold text-accent text-lg my-4">
-          Upload a Different File
-        </span>
-      </Button>
+      <div className="flex gap-3">
+        <Button
+          className={`w-max mt-4 cursor-pointer rounded-lg start-0 flex ${progress !== 0 && progress < 100 ? "cursor-not-allowed bg-muted-foreground hover:bg-muted-foreground pointer-events-none" : ""}`}
+          onClick={handleClick}
+        >
+          <Upload className="mr-1 font-bold" />
+          <span className="font-bold text-accent text-lg my-4">
+            Upload a Different File
+          </span>
+        </Button>
+        <Button
+          className={`w-max mt-4 cursor-pointer rounded-lg start-0 flex ${progress !== 0 && progress < 100 ? "cursor-not-allowed bg-muted-foreground hover:bg-muted-foreground pointer-events-none" : ""}`}
+          onClick={() => {
+            window.location.reload();
+          }}
+        >
+        <Download className="mr-1 font-bold" />
+          <span className="font-bold text-accent text-lg my-4">
+            Receive a File
+          </span>
+        </Button>
+      </div>
     </div>
   );
 };

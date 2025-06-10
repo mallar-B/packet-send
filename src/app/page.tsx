@@ -78,14 +78,6 @@ export default function Home() {
           <PeerIdCard className="mt-8" roomId={currentRoomId} />
         )}
       </div>
-      <button
-        onClick={() => {
-          console.log(isJoined);
-          console.log(!file);
-        }}
-      >
-        test
-      </button>
     </main>
   );
 }
