@@ -30,9 +30,9 @@ const ReceiveCard = ({
   useEffect(() => {
     if (receiverProgress === 100) {
       toast.success("File received successfully!");
-      setTimeout(() => {
-        window.location.reload();
-      }, 5000);
+      // setTimeout(() => {
+      //   window.location.reload();
+      // }, 5000);
     }
   }, [receiverProgress]);
 

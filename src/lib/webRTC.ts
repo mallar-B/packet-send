@@ -58,11 +58,8 @@ export const sendFile = async (
     }
 
     // Done
-    if (setSenderProgress) setSenderProgress(100);
-    channelRef.current.publish("finished sending", {
-      fileName: file.name,
-      fileSize: file.size,
-    });
+    peer.send(JSON.stringify({ type: "done" }));
+    console.log("file sent from sender");
   };
 
   await sendChunk();
@@ -87,20 +84,31 @@ export const receiveFile = async (
   // When the file is finished sending
   channelRef.current.subscribe("finished sending", async (message: any) => {
     console.log("finished sending", message.data);
-    await writer.close();
-    if (setReceiverProgress) {
-      setReceiverProgress(100);
-    }
+    console.log("but receiver progress", progress);
+    // await writer.close();
+    // if (setReceiverProgress) {
+    //   setReceiverProgress(100);
+    // }
   });
 
-  peer.on("data", async (chunk: any) => {
+  peer.on("data", (chunk: any) => {
     try {
-      await writer.write(chunk);
+      const message = JSON.parse(chunk);
+      if (message.type === "done") {
+        writer.close();
+        if (setReceiverProgress) {
+          setReceiverProgress(100);
+        }
+        return;
+      }
+    } catch (error) {}
+    try {
+      writer.write(chunk);
     } catch (error) {
-      if (receiveCancelled) return;
-      toast.error("Transfer canceled");
-      receiveCancelled = true;
-      channelRef.current.publish("receiver canceled", { fileName });
+      // if (receiveCancelled) return;
+      // toast.error("Transfer canceled");
+      // receiveCancelled = true;
+      // channelRef.current.publish("receiver canceled", { fileName });
     }
     totalReceived += chunk.byteLength;
     progress = Math.min(100, Math.round((totalReceived / fileSize) * 100));
