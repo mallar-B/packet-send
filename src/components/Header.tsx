@@ -33,7 +33,7 @@ export default function Header() {
           className="cursor-pointer rounded-3xl transition-all duration-300 ease-in-out transform hover:bg-muted hover:scale-110 active:scale-95 p-2"
           aria-label="Toggle Dark Mode"
         >
-          {!isDarkMode ? (
+          {isDarkMode ? (
             <Sun
               className="text-sidebar-foreground transition-opacity duration-300 opacity-100"
               size={25}
