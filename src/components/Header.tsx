@@ -1,3 +1,4 @@
+"use client";
 import { SendHorizontal, Moon, Sun } from "lucide-react";
 import { useEffect, useState } from "react";
 
@@ -19,7 +20,7 @@ export default function Header() {
   };
 
   return (
-    <header className="w-full border-b bg-card py-4 px-4 sm:px-8 md:px-12 xl:px-[10%] 2xl:px-64 ">
+    <header className="w-full border-b bg-card py-4 px-4 sm:px-8 md:px-12 xl:px-[10%] 2xl:px-64 fixed top-0">
       <div className="w-full flex items-center justify-between">
         <div className="flex gap-2">
           <SendHorizontal className="w-8 h-8 text-chart-4" />
