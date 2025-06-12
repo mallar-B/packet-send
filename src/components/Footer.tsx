@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import {
   BriefcaseBusiness,
   Github,
@@ -49,9 +49,9 @@ const ConnectionModal = () => {
 const Footer = () => {
   const [connectOpen, setConnectOpen] = useState(false);
   return (
-    <footer className="w-full fixed bottom-0 flex flex-col-reverse gap-4 md:justify-between items-center absolute bottom-0 text-center pt-2 border-t text-sm text-muted-foreground px-4 sm:px-8 md:px-12 xl:px-[10%] 2xl:px-64 backdrop-blur-xl">
-      {/* DUmmy element */}
-      <div className="w-48 hidden lg:block"></div>
+    <footer className="w-full fixed flex flex-col-reverse md:flex-row md:py-4 gap-4 md:justify-between items-center bottom-0 text-center pt-2 border-t text-sm text-muted-foreground px-4 sm:px-8 md:px-12 xl:px-[10%] 2xl:px-64 backdrop-blur-xl">
+      {/* DUmmy element same width as links*/}
+      <div className="w-24 hidden lg:block"></div>
       <p>© 2025 Mallar Bhattacharya. All rights reserved.</p>
       <div className="flex justify-center space-x-4">
         <div className="relative group">
