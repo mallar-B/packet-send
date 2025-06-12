@@ -43,12 +43,12 @@
   --radius-xl: calc(var(--radius) + 4px);
 }
 
-:root {
+.dark{
   /* Catppuccin Latte (light theme) */
   --radius: 0.625rem;
   --background: #eff1f5; /* Base */
   --foreground: #4c4f69; /* Text */
-  --card: #e6e9ef; /* Mantle */  
+  --card: #e6e9ef; /* Mantle */
   --card-foreground: #4c4f69; /* Text */
   --popover: #e6e9ef; /* Mantle */
   --popover-foreground: #4c4f69; /* Text */
@@ -79,8 +79,7 @@
   --sidebar-ring: #7287fd; /* Lavender */
 }
 
-
-.dark {
+:root {
   /* Catppuccin Mocha (dark theme) */
   --radius: 0.625rem;
   --background: #181825; /* Mantle */
@@ -129,4 +128,3 @@
 * {
   transition: background-color 0.3s ease, color 0.3s ease;
 }
-
