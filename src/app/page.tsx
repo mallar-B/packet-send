@@ -39,7 +39,7 @@ export default function Home() {
   }, [file]);
 
   return (
-    <main className="flex flex-col gap-[32px] items-center justify-center bg-background min-h-screen overflow-auto">
+    <main className="flex flex-col gap-[32px] lg:pt-28 pt-24 items-center justify-start bg-background min-h-screen overflow-auto">
       <Toaster
         toastOptions={{
           className: "",
@@ -51,7 +51,7 @@ export default function Home() {
         }}
       />
       <Header />
-      <div className="grid grid-cols-1 md:grid-cols-8 md:gap-8 items-start justify-center w-full h-full px-4 sm:px-8 md:px-12 xl:px-[10%] 2xl:px-64">
+      <div className="grid grid-cols-1 md:grid-cols-8 md:gap-8 items-start justify-start w-full h-full px-4 sm:px-8 md:px-12 xl:px-[10%] 2xl:px-64">
         <section className="md:col-span-5 flex flex-col md:text-left mb-8 animate-fade-in">
           <h1 className="text-3xl md:text-4xl font-bold mb-3">
             Secure <span className="text-mocha-mauve">P2P</span> File Sharing
