@@ -19,9 +19,9 @@ export default function Header() {
   };
 
   return (
-    <header className="w-full border-b bg-card py-4 px-[15%]">
-      <div className="container mx-auto flex items-center justify-between">
-        <div className="flex items-center gap-2">
+    <header className="w-full border-b bg-card py-4 px-4 sm:px-8 md:px-12 xl:px-[10%] 2xl:px-64 ">
+      <div className="w-full flex items-center justify-between">
+        <div className="flex gap-2">
           <SendHorizontal className="w-8 h-8 text-chart-4" />
           <h1 className="text-xl md:text-2xl font-bold text-sidebar-foreground">
             Packet<span className="text-chart-4">Send</span>
@@ -29,13 +29,19 @@ export default function Header() {
         </div>
         <button
           onClick={toggleTheme}
-          className="p-2 rounded-3xl hover:bg-muted transition-colors"
+          className="cursor-pointer rounded-3xl transition-all duration-300 ease-in-out transform hover:bg-muted hover:scale-110 active:scale-95 p-2"
           aria-label="Toggle Dark Mode"
         >
           {isDarkMode ? (
-            <Sun className="text-sidebar-foreground" size={25} />
+            <Sun
+              className="text-sidebar-foreground transition-opacity duration-300 opacity-100"
+              size={25}
+            />
           ) : (
-            <Moon className="text-sidebar-foreground" size={25} />
+            <Moon
+              className="text-sidebar-foreground transition-opacity duration-300 opacity-100"
+              size={25}
+            />
           )}
         </button>
       </div>

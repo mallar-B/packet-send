@@ -52,7 +52,7 @@ const FileUploadCard = ({
   return !file ? (
     <div
       className={cn(
-        `p-6 group ${isDisabled ? "cursor-not-allowed pointer-events-none" : ""}`,
+        `pt-6 group ${isDisabled ? "cursor-not-allowed pointer-events-none" : ""}`,
         className,
       )}
     >
@@ -60,13 +60,16 @@ const FileUploadCard = ({
         className={`w-full border-dashed border-2 border-muted-foreground p-6 bg-card ${isDisabled ? "cursor-not-allowed pointer-events-none" : ""}`}
       >
         <CardContent
-          className={`flex flex-col items-center justify-center gap-4 text-center cursor-pointer ${isDisabled ? "cursor-not-allowed pointer-events-none" : ""}`}
+          className={cn(
+            `flex flex-col items-center justify-center gap-4 text-center cursor-pointer`,
+            `${isDisabled ? "cursor-not-allowed pointer-events-none" : ""}`,
+          )}
           onDragOver={(e) => e.preventDefault()}
           onDrop={handleDrop}
           onClick={handleClick}
         >
           <Upload className="w-10 h-10" />
-          <p className="text-sm text-muted-foreground">
+          <p className="text-sm md:text-base text-muted-foreground">
             Drag and drop files here, or click to upload
           </p>
           <input
@@ -79,12 +82,11 @@ const FileUploadCard = ({
       </Card>
     </div>
   ) : (
-    <div className={cn("p-6", className)}>
-      <Card className="w-full border-double border-4 rounded-xl border-muted-foreground p-6 bg-card">
-        {/* Sending state*/}
-        {file ? (
-          <div className="flex w-full border-b-1 border-muted-foreground px-4 pb-2">
-            <span className="font-bold text-2xl text-sidebar-foreground">
+    <div className={cn("pt-6", className)}>
+      <Card className="w-full border-double border-4 rounded-xl border-muted-foreground p-4 sm:p-6 bg-card">
+        {file && (
+          <div className="flex w-full border-b border-muted-foreground px-2 sm:px-4 pb-2">
+            <span className="font-semibold sm:font-bold text-lg sm:text-2xl text-sidebar-foreground">
               {progress === 0
                 ? "In Queue"
                 : progress < 100
@@ -92,53 +94,62 @@ const FileUploadCard = ({
                   : "Sent"}
             </span>
           </div>
-        ) : null}
-        <CardContent className="flex flex-col items-center justify-center gap-4 text-center">
-          <p className="text-sm text-foreground self-start">
-            <span className="font-bold text-lg rounded-s-2xl">File:</span>{" "}
-            {/* slice middle if name is too long */}
+        )}
+        <CardContent className="flex flex-col items-start sm:items-center justify-center gap-4 text-left sm:text-center md:text-left">
+          <p className="text-sm sm:text-base text-foreground break-all w-full">
+            <span className="font-bold text-base sm:text-lg">File:</span>{" "}
             {file.name.length > 70
               ? `${file.name.slice(0, file.name.length - 20)} … ${file.name.slice(-10)}`
-              : file.name}{" "}
+              : file.name}
           </p>
-          <p className="text-sm text-foreground self-start">
-            <span className="font-bold text-lg rounded-s-2xl">Size:</span>{" "}
+          <p className="text-sm sm:text-base text-foreground md:self-start">
+            <span className="font-bold text-base sm:text-lg">Size:</span>{" "}
             {byteToGB(file.size)}
           </p>
-          {/* this input is so that reupload works, thats why its hidden */}
           <input
             type="file"
             ref={inputRef}
             onChange={handleFileChange}
-            className="w-full h-full hidden cursor-pointer"
+            className="hidden"
           />
-          {/* Only for sender*/}
-          {progress !== 0 ? (
-            <div className="mt-3 flex self-start w-full items-center gap-3">
+          {progress !== 0 && (
+            <div className="mt-3 flex flex-col sm:flex-row w-full items-center gap-3">
               <Progress value={progress} className="w-full" />
-              <span className="text-xl font-black">{progress}%</span>
+              <span className="text-lg sm:text-xl font-bold">{progress}%</span>
             </div>
-          ) : null}
+          )}
         </CardContent>
       </Card>
-      <div className="flex gap-3">
+
+      <div className="flex flex-col sm:flex-row gap-3 mt-4">
         <Button
-          className={`w-max mt-4 cursor-pointer rounded-lg start-0 flex ${progress !== 0 && progress < 100 ? "cursor-not-allowed bg-muted-foreground hover:bg-muted-foreground pointer-events-none" : ""}`}
+          className={cn(
+            "w-full sm:w-max flex items-center justify-center gap-2",
+            "cursor-pointer rounded-lg",
+            progress !== 0 && progress < 100
+              ? "cursor-not-allowed bg-muted-foreground hover:bg-muted-foreground pointer-events-none"
+              : "",
+          )}
           onClick={handleClick}
         >
-          <Upload className="mr-1 font-bold" />
-          <span className="font-bold text-accent text-lg my-4">
+          <Upload className="w-5 h-5" />
+          <span className="text-base font-semibold text-accent">
             Upload a Different File
           </span>
         </Button>
+
         <Button
-          className={`w-max mt-4 cursor-pointer rounded-lg start-0 flex ${progress !== 0 && progress < 100 ? "cursor-not-allowed bg-muted-foreground hover:bg-muted-foreground pointer-events-none" : ""}`}
-          onClick={() => {
-            window.location.reload();
-          }}
+          className={cn(
+            "w-full sm:w-max flex items-center justify-center gap-2",
+            "cursor-pointer rounded-lg",
+            progress !== 0 && progress < 100
+              ? "cursor-not-allowed bg-muted-foreground hover:bg-muted-foreground pointer-events-none"
+              : "",
+          )}
+          onClick={() => window.location.reload()}
         >
-          <Download className="mr-1 font-bold" />
-          <span className="font-bold text-accent text-lg my-4">
+          <Download className="w-5 h-5" />
+          <span className="text-base font-semibold text-accent">
             Receive a File
           </span>
         </Button>

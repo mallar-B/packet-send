@@ -7,6 +7,7 @@ import ReceiveCard from "@/components/ReceiveCard";
 import { useFileContext } from "@/context/SelectedFileContext";
 import PeerIdCard from "@/components/PeerIdCard";
 import { Toaster } from "react-hot-toast";
+import Footer from "@/components/Footer";
 
 export default function Home() {
   const {
@@ -38,7 +39,7 @@ export default function Home() {
   }, [file]);
 
   return (
-    <main className="flex flex-col gap-[32px] items-center justify-center bg-background">
+    <main className="flex flex-col gap-[32px] items-center justify-center bg-background h-full overflow-auto">
       <Toaster
         toastOptions={{
           className: "",
@@ -50,38 +51,44 @@ export default function Home() {
         }}
       />
       <Header />
-      <div className="grid grid-cols-3 gap-[32px] items-center justify-center w-full px-[15%]">
-        <section className="col-span-2 flex flex-col text-center lg:text-left mb-8 animate-fade-in">
+      <div className="grid grid-cols-1 md:grid-cols-8 md:gap-8 items-start justify-center w-full px-4 sm:px-8 md:px-12 xl:px-[10%] 2xl:px-64">
+        <section className="md:col-span-5 flex flex-col md:text-left mb-8 animate-fade-in">
           <h1 className="text-3xl md:text-4xl font-bold mb-3">
             Secure <span className="text-mocha-mauve">P2P</span> File Sharing
           </h1>
-          <p className="text-mocha-subtext0 max-w-2xl mx-auto lg:mx-0">
-            Send files directly to your peers without server storage. Fast,
-            secure, and private.
+          <p className="text-mocha-subtext0 max-w-xl md:mx-0 text-base md:text-lg">
+            Send files directly to device without server storage. Fast, secure,
+            and private.
           </p>
-          <div className="mt-8">
+          <div className="mt-6 sm:mt-8">
             <FileUploadCard
               progress={senderProgress}
               isDisabled={isJoined && !file} // Joined and no file means receiver
             />
           </div>
         </section>
-        {!file ? (
-          <ReceiveCard
-            className="mt-8"
-            joinRoom={joinRoom}
-            channelRef={channelRef}
-            userId={userId}
-            isJoined={isJoined}
-            setIsJoined={setIsJoined}
-            leaveRoom={leaveRoom}
-            connectingToPeer={connectingToPeer}
-            setConnectingToPeer={setConnectingToPeer}
-          />
-        ) : (
-          <PeerIdCard className="mt-8" roomId={currentRoomId} />
-        )}
+        <div className="w-full mt-4 md:mt-8 md:col-span-3 self-end">
+          {!file ? (
+            <ReceiveCard
+              className="w-full"
+              joinRoom={joinRoom}
+              channelRef={channelRef}
+              userId={userId}
+              isJoined={isJoined}
+              setIsJoined={setIsJoined}
+              leaveRoom={leaveRoom}
+              connectingToPeer={connectingToPeer}
+              setConnectingToPeer={setConnectingToPeer}
+            />
+          ) : (
+            <PeerIdCard
+              className="w-full mt-4 md:mt-8 md:col-span-3 md:self-end md:mb-20 px-4"
+              roomId={currentRoomId}
+            />
+          )}
+        </div>
       </div>
+      <Footer />
     </main>
   );
 }
